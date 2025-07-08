@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      contents: write  # ⬅️ برای ساخت Release لازم است
 
     steps:
     - name: Checkout source
@@ -26,17 +28,11 @@ jobs:
         cd TraySwitcher
         dotnet publish -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o ../out
 
-    - name: Release Build
+    - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: build-${{ github.run_number }}
         name: Build ${{ github.run_number }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Upload EXE
-      uses: softprops/action-gh-release@v1
-      with:
-        files: out/TraySwitcher.exe
+        files: out/TraySwitcher.exe  # می‌تونی اینو همون جا ضمیمه کنی
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
