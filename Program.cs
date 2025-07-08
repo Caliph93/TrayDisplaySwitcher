@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 class Program
@@ -24,13 +25,27 @@ class Program
         // آیکون در Tray
         trayIcon = new NotifyIcon()
         {
-            Icon = SystemIcons.Application,
+            Icon = LoadTrayIcon(),
             ContextMenuStrip = menu,
             Text = "Display Switcher",
             Visible = true
         };
 
         Application.Run();
+    }
+
+    static Icon LoadTrayIcon()
+    {
+        string iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app.ico");
+        if (File.Exists(iconPath))
+        {
+            return new Icon(iconPath);
+        }
+        else
+        {
+            MessageBox.Show("app.ico not found. Using default icon.");
+            return SystemIcons.Application;
+        }
     }
 
     static void SetDisplayMode(string mode)
