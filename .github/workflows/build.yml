@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: windows-latest
     permissions:
-      contents: write  # ⬅️ برای ساخت Release لازم است
+      contents: write
 
     steps:
     - name: Checkout source
@@ -25,14 +25,15 @@ jobs:
       run: |
         dotnet new winforms -n TraySwitcher --force
         copy Program.cs TraySwitcher\Program.cs
+        copy app.ico TraySwitcher\app.ico
         cd TraySwitcher
-        dotnet publish -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o ../out
+        dotnet publish -c Release -r win-x64 --self-contained false -p:PublishSingleFile=false -o ../out
 
-    - name: Create GitHub Release
+    - name: Release Build
       uses: softprops/action-gh-release@v1
       with:
         tag_name: build-${{ github.run_number }}
         name: Build ${{ github.run_number }}
-        files: out/TraySwitcher.exe  # می‌تونی اینو همون جا ضمیمه کنی
+        files: TraySwitcher/out/TraySwitcher.exe
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
